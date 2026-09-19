@@ -22,7 +22,9 @@ def run_web_server():
 # 2. आपका एडवांस 4-लेवल ट्रेडिंग बॉट लॉजिक
 API_KEY = os.environ.get('BINANCE_API_KEY')
 API_SECRET = os.environ.get('BINANCE_API_SECRET')
-client = Client(API_KEY, API_SECRET, testnet=True)
+
+# 🛠️ यहाँ टाइमआउट फिक्स जोड़ दिया गया है ताकि डिप्लॉय फेल न हो
+client = Client(API_KEY, API_SECRET, testnet=True, requests_params={"timeout": 20})
 SYMBOL = 'BTCUSDT'
 QUANTITY = 0.001
 
@@ -56,7 +58,7 @@ def analyze_market():
     prev_idx = df.index[-2]
     current_price = df['close'].loc[last_idx]
     
-    print(f"\n📊 [LIVE] Price: {current_price} | RSI: {rsi.loc[last_idx]:.2f}")
+    print(f"\n📊 [LIVE CLOUD] Price: {current_price} | RSI: {rsi.loc[last_idx]:.2f}")
     
     is_bullish = ema_50.loc[last_idx] > ema_200.loc[last_idx]
     macd_cross_up = (macd_line.loc[prev_idx] <= macd_signal.loc[prev_idx]) and (macd_line.loc[last_idx] > macd_signal.loc[last_idx])
@@ -119,4 +121,3 @@ if __name__ == "__main__":
     t = threading.Thread(target=bot_loop)
     t.start()
     run_web_server()
-
